@@ -27,13 +27,19 @@ def scrap(url):
 def print_links(soup):
     links = soup.find_all('a')
     url_regex = r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-    links = [str(link.get('href')) for link in links if re.search(url_regex, str(link))]
+    links = set([str(link.get('href')) for link in links if re.search(url_regex, str(link))])
     print "URLs"
     for link in links:
         print link
+
     links = soup.find_all('img')
+    srces = set()
     for link in links:
-        print link.get('src')
+        src = link.get('src')
+        if src and src not in srces:
+            srces.add(src)
+            print src
+    
         
 
 def print_email_addresses(soup):
@@ -63,14 +69,13 @@ def create_parser():
 def main(url):
     soup = scrap(url)
     if soup:
-        # print_links(soup)
+        print_links(soup)
         print_email_addresses(soup)
-        # print_phone_numbers(soup)
+        print_phone_numbers(soup)
 
 if __name__ == "__main__":
     parser = create_parser()
     url = parser.parse_args().url
     main(url)
 
-    # print_email_addresses(soup)
     
